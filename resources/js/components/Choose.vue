@@ -9,6 +9,7 @@
                     <div class="inline-block relative w-64">
                         <select class="block appearance-none w-full bg-white border border-grey-light hover:border-grey px-4 py-2 pr-8 rounded shadow leading-tight focus:outline-none focus:shadow-outline"
                                 v-model="giver">
+                            <option value="" disabled selected>Choose YOUR name</option>
                             <option :value="profile" v-for="profile in profiles">{{profile.name}}</option>
                         </select>
                         <div class="pointer-events-none absolute pin-y pin-r flex items-center px-2 text-grey-darker">
@@ -19,7 +20,7 @@
                     </div>
                     <button @click.prevent="makeGift"
                             class="bg-transparent hover:bg-white text-white font-semibold hover:text-white py-2 px-4 border border-white hover:border-transparent rounded mt-4">
-                        Give Present
+                        Make a gift
                     </button>
                     <timer
                             endtime="Dec 19, 2018 22:00:00"
