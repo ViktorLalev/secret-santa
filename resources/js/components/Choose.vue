@@ -1,6 +1,6 @@
 <template>
     <div>
-        <section class="text-white flex justify-center">
+        <section class="text-white lg:flex lg:justify-center sm:p-5 text-center">
             <img alt="" src="img/secret-santa.png">
             <div class="">
                 <h1 class="text-5xl text-center font-bold align-middle">Bako Secret <span
@@ -18,24 +18,37 @@
                         </div>
                     </div>
                     <button @click.prevent="makeGift"
-                            class="bg-transparent hover:bg-white text-white font-semibold hover:text-white py-2 px-4 border border-white hover:border-transparent rounded">
+                            class="bg-transparent hover:bg-white text-white font-semibold hover:text-white py-2 px-4 border border-white hover:border-transparent rounded mt-4">
                         Give Present
                     </button>
-                    <button @click.prevent="show=!show"
-                            class="bg-transparent hover:bg-white text-white font-semibold hover:text-white py-2 px-4 border border-white hover:border-transparent rounded">
-                        Show/Hide
-                    </button>
+                    <timer
+                            endtime="Dec 19, 2018 22:00:00"
+                            starttime="Dec 15, 2018 10:37:25"
+                            trans='{
+                                 "day":"Day",
+                                 "hours":"Hours",
+                                 "minutes":"Mins",
+                                 "seconds":"Seconds",
+                                 "expired":"Presents for all",
+                                 "running":"Till the start",
+                                 "upcoming":"Till start of event.",
+                                 "status": {
+                                    "expired":"Expired",
+                                    "running":"Running",
+                                    "upcoming":"Future"
+                                   }}'
+                    ></timer>
                 </div>
             </div>
         </section>
-        <section class="py-5 px-32">
+        <section class="py-5 px-5 lg:px-32 text-center">
             <div class="flex justify-around border-b border-white py-5" v-for="result in results">
-                <div class="">
+                <div class="w-1/3">
                     <img :src="result.giver.avatar" alt="">
                     <p class="text-white text-center text-xl">{{result.giver.name}}</p>
                 </div>
-                <div class="mt-6">
-                    <svg id="Layer_1" style="enable-background:new 0 0 512 512; width: 100px" version="1.1"
+                <div class="w-1/3 lg:mt-6 flex px-2">
+                    <svg class="w-50" id="Layer_1" style="enable-background:new 0 0 512 512;" version="1.1"
                          viewBox="0 0 512 512" x="0px" xml:space="preserve"
                          xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink"
                          y="0px">
@@ -77,8 +90,8 @@
 </g>
 
 </svg>
-                    <svg height="100px" id="Capa_1" style="enable-background:new 0 0 286.614 286.614;"
-                         version="1.1" viewBox="0 0 286.614 286.614" width="100px" x="0px"
+                    <svg class="w-50"  id="Capa_1" style="enable-background:new 0 0 286.614 286.614;"
+                         version="1.1" viewBox="0 0 286.614 286.614"
                          xml:space="preserve" xmlns="http://www.w3.org/2000/svg"
                          xmlns:xlink="http://www.w3.org/1999/xlink"
                          y="0px">
@@ -91,11 +104,11 @@
 
 </svg>
                 </div>
-                <div class="" v-if="show">
+                <div class="w-1/3" v-if="show">
                     <img :src="result.taker.avatar" alt="">
                     <p class="text-white text-center text-xl">{{result.taker.name}}</p>
                 </div>
-                <div class="" v-else>
+                <div class="w-1/3" v-else>
                     <img :src="'img/'+result.taker.sex+'.png'" alt="">
                 </div>
             </div>
@@ -104,417 +117,52 @@
 </template>
 
 <script>
+    import moment from 'moment';
+
     export default {
+        props: ['tahoMessage','currentResults', 'allPossibleGivers', 'allPossibleTakers', 'backDoor'],
         data() {
             return {
-                show: false,
+                show: this.backDoor == '' ? false : true,
                 giver: {},
-                profiles: [
-                    {
-                        "name": "Volen Vulkov",
-                        "sex": "m",
-                        "avatar": "img/volen.png"
-                    },
-                    {
-                        "name": "Tisho Iordanov",
-                        "sex": "m",
-                        "avatar": "img/tisho.png"
-                    },
-                    {
-                        "name": "Borislav Borisov",
-                        "sex": "m",
-                        "avatar": "img/bore.png"
-                    },
-                    {
-                        "name": "Valdis Hinkov",
-                        "sex": "m",
-                        "avatar": "img/valdi.png"
-                    },
-                    {
-                        "name": "Venelin Petrov",
-                        "sex": "m",
-                        "avatar": "img/venelin.png"
-                    },
-                    {
-                        "name": "Miroslav Gorchev",
-                        "sex": "m",
-                        "avatar": "img/miro.png"
-                    },
-                    {
-                        "name": "Angel Radoev",
-                        "sex": "m",
-                        "avatar": "img/angel.png"
-                    },
-                    {
-                        "name": "Viktor Lalev",
-                        "sex": "m",
-                        "avatar": "img/viktor.png"
-                    },
-                    {
-                        "name": "Ivan Krastilov",
-                        "sex": "m",
-                        "avatar": "img/vasko.png"
-                    },
-                    {
-                        "name": "Dobromir Kotsev",
-                        "sex": "m",
-                        "avatar": "img/dobri.png"
-                    },
-                    {
-                        "name": "Dimitar Dishev",
-                        "sex": "m",
-                        "avatar": "img/dishev.png"
-                    },
-                    {
-                        "name": "Mitko Ivanov",
-                        "sex": "m",
-                        "avatar": "img/mitko.png"
-                    },
-                    {
-                        "name": "Petar Nikolov",
-                        "sex": "m",
-                        "avatar": "img/pesho.png"
-                    },
-                    {
-                        "name": "Радослав Тахтаджийски",
-                        "sex": "m",
-                        "avatar": "img/rado.png"
-                    },
-                    {
-                        "name": "Atanas Runyov",
-                        "sex": "m",
-                        "avatar": "img/nasko.png"
-                    },
-                    {
-                        "name": "Todor K Kanev",
-                        "sex": "m",
-                        "avatar": "img/toshko.png"
-                    },
-                    {
-                        "name": "Faraonq",
-                        "sex": "m",
-                        "avatar": "img/faraonq.png"
-                    },
-                    {
-                        "name": "Kristina Toneva",
-                        "sex": "f",
-                        "avatar": "img/kristina-toneva.png"
-                    },
-                    {
-                        "name": "Gergana Tasheva",
-                        "sex": "f",
-                        "avatar": "img/geri.png"
-                    },
-                    {
-                        "name": "Denitsa Neshkova",
-                        "sex": "f",
-                        "avatar": "img/deni.png"
-                    },
-                    {
-                        "name": "Ана-Мария Ташева",
-                        "sex": "f",
-                        "avatar": "img/ana-maria.png"
-                    },
-                    {
-                        "name": "Христина Петкова",
-                        "sex": "f",
-                        "avatar": "img/hristina.png"
-                    },
-                    {
-                        "name": "Victoria Chilingirova",
-                        "sex": "f",
-                        "avatar": "img/viki.png"
-                    },
-                    {
-                        "name": "Desislava Sirakova",
-                        "sex": "f",
-                        "avatar": "img/desi.png"
-                    },
-                    {
-                        "name": "Ani Sarieva",
-                        "sex": "f",
-                        "avatar": "img/ani.png"
-                    },
-                    {
-                        "name": "Maria Shiderska",
-                        "sex": "f",
-                        "avatar": "img/mimi.png"
-                    },
-                    {
-                        "name": "Gergana Nikolova",
-                        "sex": "f",
-                        "avatar": "img/gagi.png"
-                    },
-                    {
-                        "name": "Ceci Nikolova",
-                        "sex": "f",
-                        "avatar": "img/ceci.png"
-                    },
-                    {
-                        "name": "Dilqna Pencheva",
-                        "sex": "f",
-                        "avatar": "img/didi.png"
-                    },
-                    {
-                        "name": "Pavlina Kozareva",
-                        "sex": "f",
-                        "avatar": "img/poli.png"
-                    },
-                    {
-                        "name": "Gabriela Nenova",
-                        "sex": "f",
-                        "avatar": "img/gabi.png"
-                    },
-                    {
-                        "name": "Yoana Vasileva",
-                        "sex": "f",
-                        "avatar": "img/yo.png"
-                    },
-                    {
-                        "name": "Miglena Ivanova",
-                        "sex": "f",
-                        "avatar": "img/megi.png"
-                    },
-                    {
-                        "name": "Kristina Runyova",
-                        "sex": "f",
-                        "avatar": "img/krisi.png"
-                    },
-                    {
-                        "name": "Elena Kyorova",
-                        "sex": "f",
-                        "avatar": "img/elena.png"
-                    },
-                    {
-                        "name": "Nikolina Nevyanova",
-                        "sex": "f",
-                        "avatar": "img/nikolina.png"
-                    },
-                    {
-                        "name": "Милия Манджукова",
-                        "sex": "f",
-                        "avatar": "img/milia.png"
-                    },
-                    {
-                        "name": "Vesela Arabadzhiyska",
-                        "sex": "f",
-                        "avatar": "img/vesela.png"
-                    },
-                ],
-                possibleTakers: [
-                    {
-                        "name": "Volen Vulkov",
-                        "sex": "m",
-                        "avatar": "img/volen.png"
-                    },
-                    {
-                        "name": "Tisho Iordanov",
-                        "sex": "m",
-                        "avatar": "img/tisho.png"
-                    },
-                    {
-                        "name": "Borislav Borisov",
-                        "sex": "m",
-                        "avatar": "img/bore.png"
-                    },
-                    {
-                        "name": "Valdis Hinkov",
-                        "sex": "m",
-                        "avatar": "img/valdi.png"
-                    },
-                    {
-                        "name": "Venelin Petrov",
-                        "sex": "m",
-                        "avatar": "img/venelin.png"
-                    },
-                    {
-                        "name": "Miroslav Gorchev",
-                        "sex": "m",
-                        "avatar": "img/miro.png"
-                    },
-                    {
-                        "name": "Angel Radoev",
-                        "sex": "m",
-                        "avatar": "img/angel.png"
-                    },
-                    {
-                        "name": "Viktor Lalev",
-                        "sex": "m",
-                        "avatar": "img/viktor.png"
-                    },
-                    {
-                        "name": "Ivan Krastilov",
-                        "sex": "m",
-                        "avatar": "img/vasko.png"
-                    },
-                    {
-                        "name": "Dobromir Kotsev",
-                        "sex": "m",
-                        "avatar": "img/dobri.png"
-                    },
-                    {
-                        "name": "Dimitar Dishev",
-                        "sex": "m",
-                        "avatar": "img/dishev.png"
-                    },
-                    {
-                        "name": "Mitko Ivanov",
-                        "sex": "m",
-                        "avatar": "img/mitko.png"
-                    },
-                    {
-                        "name": "Petar Nikolov",
-                        "sex": "m",
-                        "avatar": "img/pesho.png"
-                    },
-                    {
-                        "name": "Радослав Тахтаджийски",
-                        "sex": "m",
-                        "avatar": "img/rado.png"
-                    },
-                    {
-                        "name": "Atanas Runyov",
-                        "sex": "m",
-                        "avatar": "img/nasko.png"
-                    },
-                    {
-                        "name": "Todor K Kanev",
-                        "sex": "m",
-                        "avatar": "img/toshko.png"
-                    },
-                    {
-                        "name": "Faraonq",
-                        "sex": "m",
-                        "avatar": "img/faraonq.png"
-                    },
-                    {
-                        "name": "Kristina Toneva",
-                        "sex": "f",
-                        "avatar": "img/kristina-toneva.png"
-                    },
-                    {
-                        "name": "Gergana Tasheva",
-                        "sex": "f",
-                        "avatar": "img/geri.png"
-                    },
-                    {
-                        "name": "Denitsa Neshkova",
-                        "sex": "f",
-                        "avatar": "img/deni.png"
-                    },
-                    {
-                        "name": "Ана-Мария Ташева",
-                        "sex": "f",
-                        "avatar": "img/ana-maria.png"
-                    },
-                    {
-                        "name": "Христина Петкова",
-                        "sex": "f",
-                        "avatar": "img/hristina.png"
-                    },
-                    {
-                        "name": "Victoria Chilingirova",
-                        "sex": "f",
-                        "avatar": "img/viki.png"
-                    },
-                    {
-                        "name": "Desislava Sirakova",
-                        "sex": "f",
-                        "avatar": "img/desi.png"
-                    },
-                    {
-                        "name": "Ani Sarieva",
-                        "sex": "f",
-                        "avatar": "img/ani.png"
-                    },
-                    {
-                        "name": "Maria Shiderska",
-                        "sex": "f",
-                        "avatar": "img/mimi.png"
-                    },
-                    {
-                        "name": "Gergana Nikolova",
-                        "sex": "f",
-                        "avatar": "img/gagi.png"
-                    },
-                    {
-                        "name": "Ceci Nikolova",
-                        "sex": "f",
-                        "avatar": "img/ceci.png"
-                    },
-                    {
-                        "name": "Dilqna Pencheva",
-                        "sex": "f",
-                        "avatar": "img/didi.png"
-                    },
-                    {
-                        "name": "Pavlina Kozareva",
-                        "sex": "f",
-                        "avatar": "img/poli.png"
-                    },
-                    {
-                        "name": "Gabriela Nenova",
-                        "sex": "f",
-                        "avatar": "img/gabi.png"
-                    },
-                    {
-                        "name": "Yoana Vasileva",
-                        "sex": "f",
-                        "avatar": "img/yo.png"
-                    },
-                    {
-                        "name": "Miglena Ivanova",
-                        "sex": "f",
-                        "avatar": "img/megi.png"
-                    },
-                    {
-                        "name": "Kristina Runyova",
-                        "sex": "f",
-                        "avatar": "img/krisi.png"
-                    },
-                    {
-                        "name": "Elena Kyorova",
-                        "sex": "f",
-                        "avatar": "img/elena.png"
-                    },
-                    {
-                        "name": "Nikolina Nevyanova",
-                        "sex": "f",
-                        "avatar": "img/nikolina.png"
-                    },
-                    {
-                        "name": "Милия Манджукова",
-                        "sex": "f",
-                        "avatar": "img/milia.png"
-                    },
-                    {
-                        "name": "Vesela Arabadzhiyska",
-                        "sex": "f",
-                        "avatar": "img/vesela.png"
-                    },
-                ],
-                results: [],
+                profiles: this.allPossibleGivers,
+                possibleTakers: this.allPossibleTakers,
+                results: this.currentResults,
                 givers: [],
                 takers: [],
+            }
+        },
+        mounted() {
+
+            var now = moment();
+            var theDay = moment('2018-12-19 22:00:00', 'YYYY-MM-DD HH:ii:ss');
+
+            if (now.isSameOrAfter(theDay)) {
+                this.show = true;
             }
         },
         methods: {
             makeGift() {
                 if (!_.isEmpty(this.giver)) {
 
+                    //Remove from possible givers
                     var index = this.profiles.findIndex((profile) => profile.name == this.giver.name);
+                    this.profiles.splice(index, 1);
 
-                    this.givers.push(this.giver);
-
+                    //Push to results
                     this.results.unshift({
                         giver: this.giver,
                         taker: this.randomTaker()
                     });
-                    this.profiles.splice(index, 1);
+
+                    //Empty giver
                     this.giver = {};
 
-                    axios.post('api/gift',{
-                        results:this.results
+                    //Send
+                    axios.post('api/gift', {
+                        results: this.results,
+                        givers: this.profiles,
+                        takers: this.possibleTakers
                     })
                 }
             },
